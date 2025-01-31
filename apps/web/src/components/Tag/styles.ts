@@ -11,5 +11,5 @@ export const TagContainer = styled.span<{ variant: "pendente" | "concluida" }>`
   background-color: ${(props) =>
     props.variant === "pendente" ? props.theme.colors.primary.light : props.theme.colors.success.light};
   color: ${(props) =>
-    props.variant === "pendente" ? props.theme.colors.neutral.white : props.theme.colors.success.main};
+    props.variant === "pendente" ? props.theme.colors.neutral.white : props.theme.colors.neutral.white};
 `;

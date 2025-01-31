@@ -28,15 +28,25 @@ export const useSession = () => {
       });
 
       const data = await response.json();
+      console.log(data);
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setUser(data.user);
-      setToken(data.token);
-      navigate("/");
+      if (data.status === 404) {
+        localStorage.clear();
+        return {
+          status: 401,
+          message: data.name,
+        };
+      } else {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setUser(data.user);
+        setToken(data.token);
+        navigate("/");
+        return data;
+      }
     } catch (error) {
       console.error(error);
-      alert("Erro ao fazer login usuário");
+      return { status: 500, message: "Erro ao fazer login" };
     }
   }
 
@@ -55,5 +65,41 @@ export const useSession = () => {
     }
   }
 
-  return { user, token, login, logout, updateUserTasks };
+  async function register(name: string, email: string, password: string) {
+    try {
+      const response = await fetch(`${url}/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 404) {
+        localStorage.clear();
+        return {
+          status: data.status,
+          message: data.message,
+        };
+      } else {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setUser(data.user);
+        setToken(data.token);
+        navigate("/");
+        return { status: 201, message: "Usuário criado com sucesso" };
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      return { status: 500, message: error.message };
+    }
+  }
+
+  return { user, token, login, logout, updateUserTasks, register };
 };
