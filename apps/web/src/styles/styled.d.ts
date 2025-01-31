@@ -18,6 +18,16 @@ interface Colors {
     white: string;
     offwhite: string;
   };
+  danger: {
+    main: string;
+    light: string;
+    dark: string;
+  };
+  success: {
+    main: string;
+    light: string;
+    dark: string;
+  };
 }
 
 interface Fonts {

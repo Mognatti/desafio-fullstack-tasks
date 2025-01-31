@@ -19,6 +19,16 @@ export const theme: DefaultTheme = {
       white: "#fefefe",
       offwhite: "#f5f5f5",
     },
+    danger: {
+      main: "#f44336",
+      light: "#ef5350",
+      dark: "#d32f2f",
+    },
+    success: {
+      main: "#4caf50",
+      light: "#66bb6a",
+      dark: "#388e3c",
+    },
   },
   fonts: {
     main: "'Roboto', sans-serif",
