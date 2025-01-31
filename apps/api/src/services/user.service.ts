@@ -6,6 +6,7 @@ import { hash } from "bcrypt-ts";
 const prisma = new PrismaClient();
 
 export default class UserService {
+  // TBD: Customizar o erro quando o usuário já existir
   async createUser({ email, name, password }: CreateUserProps) {
     try {
       const hashedPassword = await hash(password, 10);
