@@ -1,8 +1,6 @@
 # TaskManager
 
-Olá, seja bem vindo ao meu gerenciador de tarefas diárias! A aplicação não foi para deploy, mas você pode ver um vídeo de como ela ficou no vídeo abaixo [clicando aqui!](https://drive.google.com/file/d/1VgaD4EcgxwAYuVUcB3IRZjfmgVisVwar/view?usp=drive_link)
-
-**Lembre-se de abrir em nova aba, O git não permite "target_blank"!**
+Olá, seja bem vindo ao meu gerenciador de tarefas diárias! A aplicação não foi para deploy, mas você pode ver um vídeo de como ela ficou em vídeo [clicando aqui!](https://drive.google.com/file/d/1VgaD4EcgxwAYuVUcB3IRZjfmgVisVwar/view?usp=drive_link)
 
 ## Requisitos de Back-end
 
