@@ -1,5 +1,5 @@
 import { createContext, useState, ReactNode, useEffect, useMemo } from "react";
-import { User } from "../types/authContext.types";
+import { User } from "../types/user.type";
 
 type SessionContextType = {
   token: string | null;
