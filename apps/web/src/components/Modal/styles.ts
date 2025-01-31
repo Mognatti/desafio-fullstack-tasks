@@ -29,8 +29,8 @@ export const ModalContent = styled.div`
 export const ModalHeader = styled.div`
   display: flex;
   padding: 8px 16px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.primary.main};
   justify-content: space-between;
+  margin-bottom: 16px;
 `;
 
 export const CloseButton = styled(IoMdClose)`
