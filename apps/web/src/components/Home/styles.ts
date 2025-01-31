@@ -67,7 +67,11 @@ export const CardTitle = styled.h4`
   margin: 0;
 `;
 
-export const CardDate = styled.span`
+export const CardDate = styled.div`
+  display: flex;
+  position: absolute;
+  left: 16px;
+  gap: 4px;
   font-size: 0.85em;
 `;
 
