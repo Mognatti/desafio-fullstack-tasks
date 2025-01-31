@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { IoMdClose } from "react-icons/io";
 
 export const ModalContainer = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   display: flex;
