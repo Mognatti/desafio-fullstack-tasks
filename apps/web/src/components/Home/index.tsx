@@ -1,44 +1,42 @@
 import { useSession } from "../../hooks/useSession";
-import useTasks from "../../hooks/useTasks";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import useTasks from "../../hooks/useTasks";
+import { useState } from "react";
 import Section from "../Section";
 import Button from "../Button";
 import Modal from "../Modal";
 import Input from "../Input";
+import * as S from "./styles";
 
 export default function Home() {
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const { user } = useSession();
-  const { createTask } = useTasks();
+  const { createTask, deleteTask } = useTasks();
   const navigate = useNavigate();
-  console.log(user?.tasks);
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
 
   function handleClick() {
     setShowModal((prev) => !prev);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleCreateTask(e: React.FormEvent) {
     e.preventDefault();
     if (!user) {
       navigate("/login");
     } else {
       const res = await createTask(title, description, user.id);
-      if (res.status !== 200) {
-        alert(res.message);
+      if (res.status !== 201) {
+        console.log(res);
       } else {
-        window.location.reload();
         setShowModal(false);
       }
     }
+  }
+
+  async function handleDeleteTask(userId: number, taskId: number) {
+    const res = await deleteTask(userId, taskId);
+    console.log(res.message);
   }
 
   return (
@@ -53,7 +51,7 @@ export default function Home() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-            <Button onClick={(e: React.FormEvent) => handleSubmit(e)}>Criar</Button>
+            <Button onClick={(e: React.FormEvent) => handleCreateTask(e)}>Criar</Button>
           </form>
         </Modal>
       )}
@@ -65,18 +63,25 @@ export default function Home() {
         <div id="show-tasks-container">
           <h3>Minhas Tarefas</h3>
           <ul>
-            <li>
-              <p id="task-title">Fazer X</p>
-              <p id="task-desc">bla bla bla bla bla</p>
-            </li>
-            <li>
-              <p id="task-title">Fazer Y</p>
-              <p id="task-desc"></p>
-            </li>
-            <li>
-              <p id="task-title">Fazer X</p>
-              <p id="task-desc">bla bla bla bla bla</p>
-            </li>
+            {user?.tasks.map(
+              (task) =>
+                task.status === "pendente" && (
+                  <S.CardContainer key={task.id}>
+                    <div id="card-header">
+                      <p id="task-title">{task.title}</p>
+                      <span>{task.status}</span>
+                    </div>
+                    <S.CardBody id="card-body">
+                      <p id="task-desc">{task.description}</p>
+                      <span>{task.createdAt}</span>
+                    </S.CardBody>
+                    <S.CardFooter id="card-footer">
+                      <Button>Concluir</Button>
+                      <Button onClick={() => handleDeleteTask(user.id, task.id)}>Excluir</Button>
+                    </S.CardFooter>
+                  </S.CardContainer>
+                )
+            )}
           </ul>
         </div>
         <Button onClick={handleClick}>Criar nova tarefa</Button>
