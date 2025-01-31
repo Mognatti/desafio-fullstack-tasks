@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import UserService from "../services/user.service";
 import { CustomError } from "../../utils/class.error";
+import UserService from "../services/user.service";
+import { Request, Response } from "express";
 import { Result } from "../types/user.types";
 
 const userService = new UserService();
