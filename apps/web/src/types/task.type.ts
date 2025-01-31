@@ -3,6 +3,6 @@ export type Task = {
   description: string;
   id: number;
   title: string;
-  updatedAt: string;
   userId: number;
+  status: string;
 };
