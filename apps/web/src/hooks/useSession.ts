@@ -1,6 +1,7 @@
-import { useContext } from "react";
 import { SessionContext } from "../context/SessionContext";
 import { useNavigate } from "react-router-dom";
+import { Task } from "../types/task.type";
+import { useContext } from "react";
 
 export const useSession = () => {
   const context = useContext(SessionContext);
@@ -46,5 +47,13 @@ export const useSession = () => {
     setToken(null);
   }
 
-  return { user, token, login, logout };
+  function updateUserTasks(tasks: Task[]) {
+    if (user) {
+      const updatedUser = { ...user, tasks };
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser)); // Persistir no localStorage
+    }
+  }
+
+  return { user, token, login, logout, updateUserTasks };
 };
