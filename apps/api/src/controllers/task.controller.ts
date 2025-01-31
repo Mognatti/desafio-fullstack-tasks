@@ -68,3 +68,25 @@ export async function getTasks(req: Request, res: Response) {
     });
   }
 }
+
+export async function updateTask(req: Request, res: Response) {
+  try {
+    const { id, title, description, status, userId } = req.body;
+    const updatedTask = await taskService.updateTask({ id, title, description, status, userId });
+    res.status(200).json({
+      status: 200,
+      success: true,
+      error: false,
+      message: "Tarefa atualizada com sucesso",
+      data: updatedTask,
+    });
+  } catch (error: any) {
+    res.status(error.status ?? 500).json({
+      status: error.status ?? 500,
+      success: false,
+      error: true,
+      message: `Erro ao atualizar tarefa: ${error.message}`,
+      data: null,
+    });
+  }
+}
