@@ -7,6 +7,8 @@ import Button from "../Button";
 import Modal from "../Modal";
 import Input from "../Input";
 import * as S from "./styles";
+import { toTitle } from "../../utils/title";
+import { formatDate } from "../../utils/formatDate";
 
 export default function Home() {
   const [showModal, setShowModal] = useState(false);
@@ -51,40 +53,53 @@ export default function Home() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-            <Button onClick={(e: React.FormEvent) => handleCreateTask(e)}>Criar</Button>
+            <Button onClick={(e: React.FormEvent) => handleCreateTask(e)} variant="text">
+              Criar
+            </Button>
           </form>
         </Modal>
       )}
       <Section>
         <div id="title">
-          <h1>Bem vindo{`${user ? ", " + user.name : ""}`}. </h1>
-          <span>Você já completou X tarefas.</span>
+          <h1>Bem vindo{`${user ? ", " + user.name : ""}`} </h1>
         </div>
-        <div id="show-tasks-container">
-          <h3>Minhas Tarefas</h3>
-          <ul>
+        <S.HomeContainer id="show-tasks-container">
+          <S.TasksHeader>
+            <h3>Minhas tarefas</h3>
+            <S.AddTaskButton onClick={handleClick}>
+              <S.AddTaskIcon size={20}></S.AddTaskIcon>
+              Criar nova tarefa
+            </S.AddTaskButton>
+          </S.TasksHeader>
+          <S.TaskList>
             {user?.tasks.map(
               (task) =>
                 task.status === "pendente" && (
                   <S.CardContainer key={task.id}>
-                    <div id="card-header">
-                      <p id="task-title">{task.title}</p>
-                      <span>{task.status}</span>
-                    </div>
+                    <S.CardHeader id="card-header">
+                      <S.CardTitle id="task-title">{toTitle(task.title)}</S.CardTitle>
+                      <Button customStyle={{ padding: "8px" }} variant="text">
+                        <S.EditTaskIcon size={16} />
+                        Editar
+                      </Button>
+                    </S.CardHeader>
                     <S.CardBody id="card-body">
                       <p id="task-desc">{task.description}</p>
-                      <span>{task.createdAt}</span>
                     </S.CardBody>
                     <S.CardFooter id="card-footer">
-                      <Button>Concluir</Button>
-                      <Button onClick={() => handleDeleteTask(user.id, task.id)}>Excluir</Button>
+                      <S.CardDate style={{ position: "absolute", left: "16px" }}>
+                        criado em: {formatDate(task.createdAt)}
+                      </S.CardDate>
+                      <Button variant="outline">Concluir</Button>
+                      <Button onClick={() => handleDeleteTask(user.id, task.id)} variant="outline">
+                        Excluir
+                      </Button>
                     </S.CardFooter>
                   </S.CardContainer>
                 )
             )}
-          </ul>
-        </div>
-        <Button onClick={handleClick}>Criar nova tarefa</Button>
+          </S.TaskList>
+        </S.HomeContainer>
       </Section>
     </>
   );
