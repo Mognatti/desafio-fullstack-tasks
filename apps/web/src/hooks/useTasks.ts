@@ -1,3 +1,4 @@
+import { Task } from "../types/task.type";
 import { useSession } from "./useSession";
 
 export default function useTasks() {
@@ -81,5 +82,39 @@ export default function useTasks() {
     }
   }
 
-  return { createTask, deleteTask, getTasks };
+  async function updateTask(task: Task) {
+    if (!task.id) return { status: 400, message: "Tarefa nao encontrada" };
+    if (!task.title || task.title.length < 3)
+      return { status: 400, message: "O título da tarefa precisa ter pelo menos 3 caracteres" };
+    try {
+      const response = await fetch(`${url}/${task.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(task),
+      });
+
+      const data = await response.json();
+      if (data.success === true && user) {
+        updateUserTasks(
+          user.tasks.map((t) => {
+            if (t.id === task.id) {
+              return task;
+            }
+            return t;
+          })
+        );
+      }
+      return {
+        status: data.status,
+        message: data.message,
+      };
+    } catch (error) {
+      console.error(error);
+      return { status: 500, message: "Erro ao atualizar tarefa" };
+    }
+  }
+
+  return { createTask, deleteTask, getTasks, updateTask };
 }
