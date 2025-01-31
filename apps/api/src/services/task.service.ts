@@ -1,6 +1,6 @@
-import { CreateTaskProps } from "../types/task.types";
+import { CreateTaskProps, UpdateTasksProps } from "../types/task.types";
 import { CustomError } from "../../utils/class.error";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Task } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -21,17 +21,28 @@ export default class TaskService {
     }
   }
 
-  //   async updateTask(id: number, { title, description }: UpdateTaskProps) {
-  //     return prisma.task.update({
-  //       where: {
-  //         id,
-  //       },
-  //       data: {
-  //         title,
-  //         description,
-  //       },
-  //     });
-  //   }
+  async updateTask({ id, title, description, status, userId }: UpdateTasksProps) {
+    const task = await prisma.task.findUnique({ where: { id } });
+
+    if (!task) {
+      throw new CustomError("Tarefa nao encontrada", 404);
+    }
+
+    if (task.userId !== userId) {
+      throw new CustomError("Usuário nao autorizado", 401);
+    }
+
+    return prisma.task.update({
+      where: {
+        id,
+      },
+      data: {
+        title: title ?? task.title,
+        description: description ?? task.description,
+        status: status ?? task.status,
+      },
+    });
+  }
 
   async deleteTask(userId: number, id: number) {
     const task = await prisma.task.findUnique({ where: { id } });
@@ -45,9 +56,7 @@ export default class TaskService {
     }
 
     return prisma.task.delete({
-      where: {
-        id,
-      },
+      where: { id },
     });
   }
 
@@ -60,9 +69,8 @@ export default class TaskService {
       }
 
       const tasks = await prisma.task.findMany({
-        where: {
-          userId,
-        },
+        where: { userId },
+        orderBy: { createdAt: "desc" },
       });
 
       return tasks;
@@ -70,12 +78,4 @@ export default class TaskService {
       throw new Error(`Erro ao buscar tarefas: ${error.message}`);
     }
   }
-
-  //   async getTaskData(id: number) {
-  //     const task = await prisma.task.findUnique({ where: { id } });
-  //     if (!task) {
-  //       throw new CustomError("Tarefa não encontrada", 404);
-  //     }
-  //     return task;
-  //   }
 }
