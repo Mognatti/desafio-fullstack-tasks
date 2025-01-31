@@ -11,7 +11,6 @@ export default function Auth() {
     e.preventDefault();
     login(email, password);
   }
-
   return (
     <div>
       <form onSubmit={(e) => handleSubmit(e)}>
