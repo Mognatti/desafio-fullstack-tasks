@@ -14,13 +14,14 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN ?? "1h";
 
 export default class AuthService {
   async login({ email, password }: LoginProps) {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email }, include: { tasks: true } });
+
     if (!user) {
       throw new CustomError("Usuário não encontrado", 404);
     }
 
-    const passwordMatch = await compare(password, user.password);
-    if (!passwordMatch) {
+    const checkPassword = await compare(password, user.password);
+    if (!checkPassword) {
       throw new CustomError("Senha incorreta", 401);
     }
 
@@ -30,6 +31,12 @@ export default class AuthService {
 
     const token = jwt.sign({ id: user.id }, JWT_SECRET);
 
-    return { user, token };
+    const userData = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      tasks: user.tasks,
+    };
+    return { user: userData, token };
   }
 }
