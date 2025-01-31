@@ -1,5 +1,8 @@
+import { useSession } from "./useSession";
+
 export default function useTasks() {
-  const url = import.meta.env.VITE_API_BASE_URL;
+  const url = `${import.meta.env.VITE_API_BASE_URL}/task`;
+  const { user, updateUserTasks } = useSession();
 
   async function createTask(title: string, description: string, userId: number) {
     if (title.length < 3) {
@@ -9,7 +12,7 @@ export default function useTasks() {
     if (!userId) return { status: 400, message: "Usuário nao encontrado" };
 
     try {
-      const response = await fetch(`${url}/task`, {
+      const response = await fetch(`${url}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -21,13 +24,62 @@ export default function useTasks() {
         }),
       });
 
-      const data = await response.json();
-      return data;
+      const res = await response.json();
+
+      if (res.success === true && user) {
+        updateUserTasks([...user.tasks, res.data]);
+      }
+
+      return {
+        status: res.status,
+        message: res.message,
+      };
     } catch (error) {
       console.error(error);
       return { status: 500, message: "Erro ao criar tarefa" };
     }
   }
 
-  return { createTask };
+  async function deleteTask(userId: number, id: number) {
+    try {
+      const response = await fetch(`${url}/${userId}/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success === true && user) {
+        updateUserTasks(user.tasks.filter((task) => task.id !== id));
+      }
+      return {
+        status: data.status,
+        message: data.message,
+      };
+    } catch (error) {
+      console.error(error);
+      return { status: 500, message: "Erro ao deletar tarefa" };
+    }
+  }
+
+  async function getTasks(userId: number) {
+    try {
+      const response = await fetch(`${url}/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      return { status: 500, message: "Erro ao buscar tarefas" };
+    }
+  }
+
+  return { createTask, deleteTask, getTasks };
 }
